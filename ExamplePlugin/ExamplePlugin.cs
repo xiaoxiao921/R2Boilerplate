@@ -11,7 +11,7 @@ namespace ExamplePlugin
 
     //This attribute specifies that we have a dependency on R2API, as we're using it to add our item to the game.
     //You don't need this if you're not using R2API in your plugin, it's just to tell BepInEx to initialize R2API before this plugin so it's safe to use R2API.
-    [BepInDependency("com.bepis.r2api")]
+    [BepInDependency(R2API.R2API.PluginGUID)]
 	
 	//This attribute is required, and lists metadata for your plugin.
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
