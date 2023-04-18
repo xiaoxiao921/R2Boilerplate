@@ -1,6 +1,5 @@
 using BepInEx;
 using R2API;
-using R2API.Utils;
 using RoR2;
 using UnityEngine;
 using UnityEngine.AddressableAssets;
@@ -16,9 +15,6 @@ namespace ExamplePlugin
 
     //This attribute is required, and lists metadata for your plugin.
     [BepInPlugin(PluginGUID, PluginName, PluginVersion)]
-
-    //We will be using 2 modules from R2API: ItemAPI to add our item and LanguageAPI to add our language tokens.
-    [R2APISubmoduleDependency(nameof(ItemAPI), nameof(LanguageAPI))]
 
     //This is the main declaration of our plugin class. BepInEx searches for all classes inheriting from BaseUnityPlugin to initialize on startup.
     //BaseUnityPlugin itself inherits from MonoBehaviour, so you can use this as a reference for what you can declare and use in your plugin class: https://docs.unity3d.com/ScriptReference/MonoBehaviour.html
@@ -43,7 +39,7 @@ namespace ExamplePlugin
             //First let's define our item
             myItemDef = ScriptableObject.CreateInstance<ItemDef>();
 
-            // Language Tokens, check AddTokens() below.
+            // Language Tokens, explained there https://risk-of-thunder.github.io/R2Wiki/Mod-Creation/Assets/Localization/
             myItemDef.name = "EXAMPLE_CLOAKONKILL_NAME";
             myItemDef.nameToken = "EXAMPLE_CLOAKONKILL_NAME";
             myItemDef.pickupToken = "EXAMPLE_CLOAKONKILL_PICKUP";
@@ -71,9 +67,6 @@ namespace ExamplePlugin
             //This is useful for certain noTier helper items, such as the DrizzlePlayerHelper.
             myItemDef.hidden = false;
 
-            //Now let's turn the tokens we made into actual strings for the game:
-            AddTokens();
-
             //You can add your own display rules here, where the first argument passed are the default display rules: the ones used when no specific display rules for a character are found.
             //For this example, we are omitting them, as they are quite a pain to set up without tools like ItemDisplayPlacementHelper
             var displayRules = new ItemDisplayRuleDict(null);
@@ -85,7 +78,7 @@ namespace ExamplePlugin
             GlobalEventManager.onCharacterDeathGlobal += GlobalEventManager_onCharacterDeathGlobal;
 
             // This line of log will appear in the bepinex console when the Awake method is done.
-            Log.LogInfo(nameof(Awake) + " done.");
+            Log.Info(nameof(Awake) + " done.");
         }
 
         private void GlobalEventManager_onCharacterDeathGlobal(DamageReport report)
@@ -114,22 +107,6 @@ namespace ExamplePlugin
             }
         }
 
-        //This function adds the tokens from the item using LanguageAPI, the comments in here are a style guide, but is very opiniated. Make your own judgements!
-        private void AddTokens()
-        {
-            //The Name should be self explanatory
-            LanguageAPI.Add("EXAMPLE_CLOAKONKILL_NAME", "Cuthroat's Garb");
-
-            //The Pickup is the short text that appears when you first pick this up. This text should be short and to the point, numbers are generally ommited.
-            LanguageAPI.Add("EXAMPLE_CLOAKONKILL_PICKUP", "Chance to cloak on kill");
-
-            //The Description is where you put the actual numbers and give an advanced description.
-            LanguageAPI.Add("EXAMPLE_CLOAKONKILL_DESC", "Whenever you <style=cIsDamage>kill an enemy</style>, you have a <style=cIsUtility>5%</style> chance to cloak for <style=cIsUtility>4s</style> <style=cStack>(+1s per stack)</style>.");
-
-            //The Lore is, well, flavor. You can write pretty much whatever you want here.
-            LanguageAPI.Add("EXAMPLE_CLOAKONKILL_LORE", "Those who visit in the night are either praying for a favour, or preying on a neighbour.");
-        }
-
         //The Update() method is run on every frame of the game.
         private void Update()
         {
@@ -141,7 +118,7 @@ namespace ExamplePlugin
 
                 //And then drop our defined item in front of the player.
 
-                Log.LogInfo($"Player pressed F2. Spawning our custom item at coordinates {transform.position}");
+                Log.Info($"Player pressed F2. Spawning our custom item at coordinates {transform.position}");
                 PickupDropletController.CreatePickupDroplet(PickupCatalog.FindPickupIndex(myItemDef.itemIndex), transform.position, transform.forward * 20f);
             }
         }
